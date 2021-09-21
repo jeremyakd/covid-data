@@ -1,6 +1,5 @@
 from django.shortcuts import render
 import requests
-import pprint
 
 url = "https://covid-193.p.rapidapi.com/statistics"
 
@@ -20,12 +19,11 @@ def home(request):
         pais = request.POST['selectedcountry']
         for i in response:
             if pais == i['country']:
-                pprint.pprint(i)
-                new = i['cases']['new']
-                active = i['cases']['active']
-                critical = i['cases']['critical']
-                recovered = i['cases']['recovered']
-                total = i['cases']['total']
+                new = i['cases']['new'] if i['cases']['new'] else '-'
+                active = i['cases']['active'] if i['cases']['active'] else '-'
+                critical = i['cases']['critical'] if i['cases']['critical'] else '-'
+                recovered = i['cases']['recovered'] if i['cases']['recovered'] else '-'
+                total = i['cases']['total'] if i['cases']['total'] else '-'
                 deaths = int(total) - int(active) - int(recovered)
         context = {
             'new': new,
@@ -37,10 +35,6 @@ def home(request):
             'pais' : pais,
             'countries': countries,
         }
+
         return render(request, 'core/index.html', context=context)
-
-
     return render(request, 'core/index.html', {'countries': countries })
-
-
-
